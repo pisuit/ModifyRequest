@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+</h:head>
+<body>
+	<h:outputStylesheet library="css" name="global.css" />
+	<div class="ui-widget ui-widget-header"
+		style="width: 1100px; margin: 0 auto">
+		<div id="logo">
+			<h1 style="color: #4F4F4F">Maintenance</h1>
+		</div>
+	</div>
+	<p:spacer height="10" />
+	<ui:include src="menu.xhtml" />
+	<p:spacer height="15" />
+	<div id="maindiv" style="width: 1100px; margin: 0 auto;">
+		<p:growl id="growl" showDetail="true" />
+		<h:outputText value="Admin Page" style="color:#4F4F4F" />
+		<p:separator />
+		<p:spacer height="5" />
+		<h:form id="adminform">
+			<p:fieldset legend="User Management" toggleable="true"
+				collapsed="true">
+				<p:dataTable id="userList" rows="10" paginator="true"
+					paginatorPosition="bottom" value="#{adminManager.userList}"
+					var="user" rowIndexVar="rowNo">
+					<p:column style="text-align:center">
+						<h:outputText value="#{rowNo+1}" style="text-align:center" />
+					</p:column>
+					<p:column headerText="Username">
+						<h:outputText value="#{user.username}" />
+					</p:column>
+					<p:column headerText="First Name">
+						<h:outputText value="#{user.firstname}" />
+					</p:column>
+					<p:column headerText="Last Name">
+						<h:outputText value="#{user.lastname}" />
+					</p:column>
+					<p:column headerText="Position">
+						<h:outputText value="#{user.position}" />
+					</p:column>
+					<p:column headerText="Role">
+						<h:outputText value="#{user.roleAsString}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton action="#{adminManager.setCurrentUser}"
+							icon="ui-icon ui-icon-pencil" update=":adminform:useredit"
+							oncomplete="userEditDialog.show()" value="Edit">
+							<f:setPropertyActionListener target="#{adminManager.editUser}"
+								value="#{user}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton icon="ui-icon-trash"
+							onclick="confirmation.show()" value="Delete">
+							<f:setPropertyActionListener target="#{adminManager.deleteUser}"
+								value="#{user}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon ui-icon-plus"
+					onclick="userInputDialog.show()" value="Create User" />
+			</p:fieldset>
+			<p:spacer height="20" />
+			<p:fieldset legend="Database/Schema Management" id="databasename"
+				toggleable="true" collapsed="true">
+				<p:dataTable value="#{adminManager.databaseList}" var="database"
+					id="databaseList" rows="10" paginator="true"
+					paginatorPosition="bottom" rowIndexVar="rowNo">
+					<p:column style="text-align:center">
+						<h:outputText value="#{rowNo+1}" style="text-align:center" />
+					</p:column>
+					<p:column headerText="Name">
+						<h:outputText value="#{database.name}" />
+					</p:column>
+					<p:column headerText="Type">
+						<h:outputText value="#{database.databaseType}" />
+					</p:column>
+					<p:column headerText="Description">
+						<h:outputText value="#{database.description}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Edit" icon="ui-icon ui-icon-pencil"
+							update=":adminform:databaseedit"
+							oncomplete="databaseEditDialog.show()"
+							action="#{adminManager.setCurrentDatabase}">
+							<f:setPropertyActionListener
+								target="#{adminManager.editDatabase}" value="#{database}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Delete" icon="ui-icon-trash"
+							onclick="confirmation2.show()">
+							<f:setPropertyActionListener
+								target="#{adminManager.deleteDatabase}" value="#{database}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon ui-icon-plus"
+					onclick="addDatabaseDialog.show()" value="Create Database/Schema" />
+			</p:fieldset>
+			<p:spacer height="20" />
+			<p:fieldset legend="System Management" id="systemname"
+				toggleable="true" collapsed="true">
+				<p:dataTable value="#{adminManager.systemList}" var="system"
+					id="systemList" rows="10" paginator="true"
+					paginatorPosition="bottom" rowIndexVar="rowNo">
+					<p:column style="text-align:center">
+						<h:outputText value="#{rowNo+1}" style="text-align:center" />
+					</p:column>
+					<p:column headerText="Name" filterBy="#{system.name}" filterMatchMode="contains">
+						<h:outputText value="#{system.name}" />
+					</p:column>
+					<p:column headerText="Description" filterBy="#{system.description}" filterMatchMode="contains">
+						<h:outputText value="#{system.description}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Edit" icon="ui-icon ui-icon-pencil"
+							update=":adminform:systemedit"
+							oncomplete="systemEditDialog.show()"
+							action="#{adminManager.setCurrentSystem}">
+							<f:setPropertyActionListener target="#{adminManager.editSystem}"
+								value="#{system}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Delete" icon="ui-icon-trash"
+							onclick="confirmation3.show()">
+							<f:setPropertyActionListener
+								target="#{adminManager.deleteSystem}" value="#{system}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon ui-icon-plus"
+					onclick="addSystemDialog.show()" value="Create System" />
+			</p:fieldset>
+			<p:dialog header="Add Database/Schema" widgetVar="addDatabaseDialog"
+				id="databaseinput" modal="false" resizable="false" showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="New Database/Schema" id="newdatabasefieldset">
+					<h:panelGrid columns="2" id="databaseinputgrid">
+						<h:outputLabel value="Name:" />
+						<p:inputText value="#{adminManager.newDatabase.name}" />
+						<h:outputLabel value="Type:" />
+						<p:selectOneRadio value="#{adminManager.newDatabaseType}">
+							<f:selectItems
+								value="#{adminManager.databaseTypeSelectRadioList}" />
+							<p:ajax listener="#{adminManager.newDatabaseTypeSelected}" />
+						</p:selectOneRadio>
+						<h:outputLabel value="Description:" />
+						<p:inputTextarea value="#{adminManager.newDatabase.description}"
+							autoResize="false" style="height:100px;width:250px" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:fieldset>
+					<h:panelGrid columns="3">
+						<p:commandButton action="#{adminManager.validateNewDatabase}"
+							value="Submit" update="databaseList,:growl,newdatabasefieldset"
+							widgetVar="addDatabaseButton"
+							onstart="addDatabaseButton.disable();"
+							onsuccess="addDatabaseButton.enable();" />
+						<p:commandButton action="#{adminManager.clearData}" value="Clear"
+							update="databaseinputgrid" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="Add System" widgetVar="addSystemDialog"
+				id="systeminput" modal="false" resizable="false" showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="New System" id="newsystemfieldset">
+					<h:panelGrid columns="2" id="systeminputgrid">
+						<h:outputLabel value="Name:" />
+						<p:inputText value="#{adminManager.newSystem.name}" />
+						<h:outputLabel value="Description:" />
+						<p:inputTextarea value="#{adminManager.newSystem.description}"
+							autoResize="false" style="height:100px;width:250px" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:fieldset>
+					<h:panelGrid columns="3">
+						<p:commandButton action="#{adminManager.validateNewSystem}"
+							value="Submit" update="systemList,:growl,newsystemfieldset"
+							widgetVar="addSystemButton" onstart="addSystemButton.disable();"
+							onsuccess="addSystemButton.enable();" />
+						<p:commandButton action="#{adminManager.clearData}" value="Clear"
+							update="systeminputgrid" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="Add User" widgetVar="userInputDialog"
+				id="userinput" modal="false" resizable="false" showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="New User" id="newuserfieldset">
+					<h:panelGrid columns="2" id="inputgrid">
+						<h:outputLabel value="Username:" for="newusername" />
+						<p:inputText id="newusername" value="#{adminManager.username}">
+							<p:ajax event="keyup" listener="#{adminManager.pollUserData}" update="displayname, displayposition"/>
+						</p:inputText>
+						<h:outputText value="" />
+						<h:outputText value="#{adminManager.displayName}" style="color:#654B24" id="displayname" />
+						<h:outputLabel value="" />
+						<h:outputText value="#{adminManager.displayPosition}" style="color:#654B24" id="displayposition"/>
+						<h:outputLabel value="Authorizations:" for="newauthorization" />
+						<p:selectManyCheckbox id="newauthorization"
+							value="#{adminManager.selectedNewAuthorizationList}"
+							layout="pageDirection">
+							<f:selectItems
+								value="#{adminManager.authorizationSelectCheckboxList}" />
+						</p:selectManyCheckbox>
+					</h:panelGrid>
+				</p:fieldset>
+				<p:fieldset>
+					<h:panelGrid columns="3">
+						<p:commandButton action="#{adminManager.validateNewUser}"
+							value="Submit" update="userList,:growl,newuserfieldset"
+							widgetVar="addUserButton" onstart="addUserButton.disable();"
+							onsuccess="addUserButton.enable();" />
+						<p:commandButton action="#{adminManager.clearData}" value="Clear"
+							update="newuserfieldset" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="Edit User" widgetVar="userEditDialog" id="useredit"
+				modal="false" resizable="false" showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="#{adminManager.currentUser}"
+					id="edituserfieldset">
+					<h:panelGrid columns="2" id="editgrid">
+						<h:outputLabel value="Username:" for="editusername" />
+						<p:inputText id="editusername"
+							value="#{adminManager.editUser.username}"></p:inputText>
+						<h:outputLabel value="Firstname:" for="editfirstname" />
+						<p:inputText id="editfirstname"
+							value="#{adminManager.editUser.firstname}"></p:inputText>
+						<h:outputLabel value="Lastname:" for="editlastname" />
+						<p:inputText id="editlastname"
+							value="#{adminManager.editUser.lastname}"></p:inputText>
+						<h:outputLabel value="Position:" for="editposition" />
+						<p:autoComplete id="editposition"
+							value="#{adminManager.editUser.position}" completeMethod="#{adminManager.positionComplete}"/>
+						<h:outputLabel value="Authorizations:" for="editauthorization" />
+						<p:selectManyCheckbox id="editauthorization"
+							value="#{adminManager.selectedEditAuthorizationList}"
+							layout="pageDirection">
+							<f:selectItems
+								value="#{adminManager.authorizationSelectCheckboxList}" />
+						</p:selectManyCheckbox>
+					</h:panelGrid>
+				</p:fieldset>
+				<p:fieldset>
+					<h:panelGrid columns="2">
+						<p:commandButton action="#{adminManager.validateEditUser}"
+							value="Submit" update="edituserfieldset,:growl,userList"
+							widgetVar="editUserButton" onstart="editUserButton.disable();"
+							onsuccess="editUserButton.enable();" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="Edit Database/Schema" widgetVar="databaseEditDialog"
+				id="databaseedit" modal="false" resizable="false" showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="#{adminManager.currentDatabase}"
+					id="editdatabasefieldset">
+					<h:panelGrid columns="2" id="editdatabasegrid">
+						<h:outputLabel value="Name:" />
+						<p:inputText value="#{adminManager.editDatabase.name}" />
+						<h:outputLabel value="Type:" />
+						<p:selectOneRadio value="#{adminManager.editDatabaseType}">
+							<f:selectItems
+								value="#{adminManager.databaseTypeSelectRadioList}" />
+							<p:ajax listener="#{adminManager.editDatabaseTypeSelected}" />
+						</p:selectOneRadio>
+						<h:outputLabel value="Description:" />
+						<p:inputTextarea value="#{adminManager.editDatabase.description}"
+							autoResize="false" style="height:100px;width:250px" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:fieldset>
+					<h:panelGrid columns="2">
+						<p:commandButton action="#{adminManager.validateEditDatabase}"
+							value="Submit" update="editdatabasefieldset,:growl,databaseList"
+							widgetVar="editDatabaseButton"
+							onstart="editDatabaseButton.disable();"
+							onsuccess="editDatabaseButton.enable();" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="Edit System" widgetVar="systemEditDialog"
+				id="systemedit" modal="false" resizable="false" showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="#{adminManager.currentSystem}"
+					id="editsystemfieldset">
+					<h:panelGrid columns="2" id="editsystemgrid">
+						<h:outputLabel value="Name:" />
+						<p:inputText value="#{adminManager.editSystem.name}" />
+						<h:outputLabel value="Description:" />
+						<p:inputTextarea value="#{adminManager.editSystem.description}"
+							autoResize="false" style="height:100px;width:250px" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:fieldset>
+					<h:panelGrid columns="2">
+						<p:commandButton action="#{adminManager.validateEditSystem}"
+							value="Submit" update="editsystemfieldset,:growl,systemList"
+							widgetVar="editSystemButton"
+							onstart="editSystemButton.disable();"
+							onsuccess="editSystemButton.enable();" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:confirmDialog
+				message="This user will be deleted, do you want to proceed ?"
+				header="Delete User" severity="alert" widgetVar="confirmation">
+				<p:commandButton value="Yes" oncomplete="confirmation.hide()"
+					action="#{adminManager.deleteUser}" update=":growl,userList" />
+				<p:commandButton value="No" onclick="confirmation.hide()" />
+			</p:confirmDialog>
+			<p:confirmDialog
+				message="This database will be deleted, do you want to proceed ?"
+				header="Delete Database/Schema" severity="alert" widgetVar="confirmation2">
+				<p:commandButton value="Yes" oncomplete="confirmation2.hide()"
+					action="#{adminManager.deleteDatabase}" update=":growl,databaseList" />
+				<p:commandButton value="No" onclick="confirmation2.hide()" />
+			</p:confirmDialog>
+			<p:confirmDialog
+				message="This system will be deleted, do you want to proceed ?"
+				header="Delete System" severity="alert" widgetVar="confirmation3">
+				<p:commandButton value="Yes" oncomplete="confirmation3.hide()"
+					action="#{adminManager.deleteSystem}" update=":growl,systemList" />
+				<p:commandButton value="No" onclick="confirmation3.hide()" />
+			</p:confirmDialog>
+		</h:form>
+	</div>
+	<p:spacer height="80" />
+	<ui:include src="footer.xhtml" />
+</body>
+</html>

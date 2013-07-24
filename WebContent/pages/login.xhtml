@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+</h:head>
+<body>
+	<h:outputStylesheet library="css" name="global.css" />
+	<div class="ui-widget ui-widget-header"
+		style="width: 1100px; margin: 0 auto">
+		<div id="logo">
+			<h1 style="color: #4F4F4F">Maintenance</h1>
+		</div>
+	</div>
+	<p:spacer height="10" />
+	<ui:include src="menu.xhtml" />
+	<p:spacer height="30" />
+	<div id="maindiv" style="width: 1100px; margin: 0 auto;">
+		<h:form id="loginform">
+			<p:panel header="Login" style="width:300px">
+				<h:panelGrid columns="2" id="logingrid">
+					<h:outputLabel value="Username:" />
+					<p:inputText value="#{loginManager.username}" required="true"
+						label="Username" />
+					<h:outputLabel value="Password:" />
+					<p:password value="#{loginManager.password}" feedback="false"
+						required="true" label="Password" />
+				</h:panelGrid>
+				<p:messages autoUpdate="true" />
+				<p:separator />
+				<p:commandButton action="#{loginManager.login}" value="Login"
+					icon="ui-icon-circle-check" global="true" />
+			</p:panel>
+			<p:dialog modal="true" closable="false" widgetVar="statusDialog"
+				draggable="false" position="center" resizable="false"
+				header="Logging in...">
+				<p:graphicImage url="../resources/images/black-ajax-loader.gif" />
+			</p:dialog>
+			<p:ajaxStatus onstart="statusDialog.show();"
+				oncomplete="statusDialog.hide();" />
+		</h:form>
+	</div>
+	<p:spacer height="80" />
+	<ui:include src="footer.xhtml" />
+</body>
+</html>

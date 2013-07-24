@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<typedef class="mrf.customtype.GenericEnumUserType" name="role">
+		<param name="enumClass">mrf.customtype.Role</param>
+	</typedef>
+	<typedef class="mrf.customtype.GenericEnumUserType" name="role_key">
+		<param name="enumClass">mrf.customtype.RoleKey</param>
+	</typedef>
+	<typedef class="mrf.customtype.GenericEnumUserType" name="server_type">
+		<param name="enumClass">mrf.customtype.ServerType</param>
+	</typedef>
+	<typedef class="mrf.customtype.GenericEnumUserType" name="status">
+		<param name="enumClass">mrf.customtype.Status</param>
+	</typedef>
+	<typedef class="mrf.customtype.GenericEnumUserType" name="process_status">
+		<param name="enumClass">mrf.customtype.ProcessStatus</param>
+	</typedef>
+	<typedef class="mrf.customtype.GenericEnumUserType" name="database_type">
+		<param name="enumClass">mrf.customtype.DatabaseType</param>
+	</typedef>
+	<class name="mrf.model.Authorization" table="MRFAUTHORIZATION">
+		<id column="ID" name="id">
+			<generator class="mrf.utils.HibernateCurrentTimeIDGenerator" />
+		</id>
+		<property column="ROLE_KEY" generated="never" lazy="false"
+			length="50" name="roleKey" type="role_key" />
+		<property column="ROLE" generated="never" lazy="false"
+			length="50" name="role" type="role" />
+		<many-to-one column="USER_ID" name="user" />
+	</class>
+	<class name="mrf.model.Database" table="MRFDATABASE">
+		<id column="ID" name="id">
+			<generator class="mrf.utils.HibernateCurrentTimeIDGenerator" />
+		</id>
+		<property column="NAME" generated="never" lazy="false" name="name"
+			type="string" />
+		<property column="DESCRIPTION" generated="never" lazy="false"
+			name="description" type="string" />
+		<property column="STATUS" generated="never" lazy="false"
+			length="50" name="status" type="status" />
+		<property column="DATABASE_TYPE" generated="never" lazy="false"
+			length="50" name="databaseType" type="database_type" />
+		<bag cascade="all" inverse="true" name="forms" order-by="ID">
+			<key column="DATABASE_ID" />
+			<one-to-many class="mrf.model.Form" />
+		</bag>
+	</class>
+	<class name="mrf.model.Form" table="MRFFORM">
+		<id column="ID" name="id">
+			<generator class="mrf.utils.HibernateCurrentTimeIDGenerator" />
+		</id>
+		<property column="REFER_FORM" generated="never" lazy="false"
+			length="50" name="referForm" type="string" />
+		<property column="POST_DATE" generated="never" lazy="false"
+			name="postDate" type="timestamp" />
+		<property column="SERVER_TYPE_FROM" generated="never" lazy="false"
+			length="50" name="serverTypeFrom" type="server_type" />
+		<property column="SERVER_TYPE_TO" generated="never" lazy="false"
+			length="50" name="serverTypeTo" type="server_type" />
+		<property column="ISDELETEDATA" generated="never" lazy="false"
+			name="deleteData" type="boolean" />
+		<property column="ISBACKUPDATA" generated="never" lazy="false"
+			name="backupData" type="boolean" />
+		<property column="ISINSERTDATA" generated="never" lazy="false"
+			name="insertData" type="boolean" />
+		<property column="ISUPDATEDATA" generated="never" lazy="false"
+			name="updateData" type="boolean" />
+		<property column="ISTRANSFERDATA" generated="never" lazy="false"
+			name="transferData" type="boolean" />
+		<property column="ISQUERYDATA" generated="never" lazy="false"
+			name="queryData" type="boolean" />
+		<property column="ISCREATETABLE" generated="never" lazy="false"
+			name="createTable" type="boolean" />
+		<property column="ISCREATEVIEW" generated="never" lazy="false"
+			name="createView" type="boolean" />
+		<property column="ISCREATEINDEX" generated="never" lazy="false"
+			name="createIndex" type="boolean" />
+		<property column="ISMODIFYTABLE" generated="never" lazy="false"
+			name="modifyTable" type="boolean" />
+		<property column="ISDROPTABLE" generated="never" lazy="false"
+			name="dropTable" type="boolean" />
+		<property column="ISDROPINDEX" generated="never" lazy="false"
+			name="dropIndex" type="boolean" />
+		<property column="ISDROPVIEW" generated="never" lazy="false"
+			name="dropView" type="boolean" />
+		<property column="ISCREATELOGIN" generated="never" lazy="false"
+			name="createLogin" type="boolean" />
+		<property column="ISGRANTDATA" generated="never" lazy="false"
+			name="grantData" type="boolean" />
+		<property column="ISREVOKELOGIN" generated="never" lazy="false"
+			name="revokeLogin" type="boolean" />
+		<property column="ISREVOKEDATA" generated="never" lazy="false"
+			name="revokeData" type="boolean" />
+		<property column="FORM_NUMBER" generated="never" lazy="false"
+			name="formNumber" type="integer" />
+		<property column="REASON" generated="never" lazy="false"
+			name="reason" type="string" />
+		<property column="START_PERFORM" generated="never" lazy="false"
+			name="startPerform" type="timestamp" />
+		<property column="END_PERFORM" generated="never" lazy="false"
+			name="endPerform" type="timestamp" />
+		<property column="PERFORM_DATE" generated="never" lazy="false"
+			name="performDate" type="timestamp" />
+		<property column="PERFORM_REMARK" generated="never" lazy="false"
+			name="performRemark" type="string" />
+		<property column="APPROVE_REMARK" generated="never" lazy="false"
+			name="approveRemark" type="string" />
+		<property column="APPROVE_DATE" generated="never" lazy="false"
+			name="approveDate" type="timestamp" />
+		<property column="STATUS" generated="never" lazy="false"
+			length="50" name="status" type="status" />
+		<property column="PROCESS_STATUS" generated="never" lazy="false"
+			length="50" name="processStatus" type="process_status" />
+		<many-to-one column="DATABASE_FROM_ID" name="databaseFrom" />
+		<many-to-one column="DATABASE_TO_ID" name="databaseTo" />
+		<many-to-one column="SYSTEM_ID" name="system" />
+		<many-to-one column="REQUESTER_ID" name="requester" />
+		<many-to-one column="PERFORMER_ID" name="performer" />
+		<many-to-one column="APPROVER_ID" name="approver" />
+		<bag inverse="true" name="fileUpload" order-by="ID">
+			<key column="FORM_ID" />
+			<one-to-many class="mrf.model.Upload" />
+		</bag>
+	</class>
+	<class name="mrf.model.Systems" table="MRFSYSTEM">
+		<id column="ID" name="id">
+			<generator class="mrf.utils.HibernateCurrentTimeIDGenerator" />
+		</id>
+		<property column="NAME" generated="never" lazy="false" name="name"
+			type="string" />
+		<property column="DESCRIPTION" generated="never" lazy="false"
+			name="description" type="string" />
+		<property column="STATUS" generated="never" lazy="false"
+			length="50" name="status" type="status" />
+		<bag inverse="true" name="forms" order-by="ID">
+			<key column="SYSTEM_ID" />
+			<one-to-many class="mrf.model.Form" />
+		</bag>
+	</class>
+	<class name="mrf.model.User" table="MRFUSER">
+		<id column="ID" name="id">
+			<generator class="mrf.utils.HibernateCurrentTimeIDGenerator" />
+		</id>
+		<property column="USERNAME" generated="never" lazy="false"
+			length="50" name="username" type="string" />
+		<property column="FIRSTNAME" generated="never" lazy="false"
+			length="50" name="firstname" type="string" />
+		<property column="LASTNAME" generated="never" lazy="false"
+			length="50" name="lastname" type="string" />
+		<property column="POSITION" generated="never" lazy="false"
+			length="200" name="position" type="string" />
+		<property column="STATUS" generated="never" lazy="false"
+			length="50" name="status" type="status" />
+		<property column="ROLE_AS_STRING" generated="never" lazy="false"
+			length="100" name="roleAsString" type="string" />
+		<bag inverse="true" name="authorizations" order-by="ID">
+			<key column="USER_ID" />
+			<one-to-many class="mrf.model.Authorization" />
+		</bag>
+		<bag inverse="true" name="requester" order-by="ID">
+			<key column="REQUESTER_ID" />
+			<one-to-many class="mrf.model.Form" />
+		</bag>
+		<bag inverse="true" name="performer" order-by="ID">
+			<key column="PERFORMER_ID" />
+			<one-to-many class="mrf.model.Form" />
+		</bag>
+		<bag inverse="true" name="approver" order-by="ID">
+			<key column="APPROVER_ID" />
+			<one-to-many class="mrf.model.Form" />
+		</bag>
+	</class>
+	<class name="mrf.model.Upload" table="MRFUPLOAD">
+		<id column="ID" name="id">
+			<generator class="mrf.utils.HibernateCurrentTimeIDGenerator" />
+		</id>
+		<property column="PHYNAME" generated="never" lazy="false"
+			length="200" name="physicalName" type="string" />
+		<property column="LOGICNAME" generated="never" lazy="false"
+			length="200" name="logicalName" type="string" />
+		<property column="CONTENTTYPE" generated="never" lazy="false"
+			length="50" name="contentType" type="string" />
+		<property column="UPLOADER" generated="never" lazy="false"
+			length="50" name="uploader" type="role" />
+		<many-to-one column="FORM_ID" name="form" />
+	</class>
+	<!-- <class name="mrf.model.Employee" table="EMPLOYEE"> <id column="EMPLOYEEID" 
+		name="employeeID"/> <property column="EMPLOYEECODE" generated="never" lazy="false" 
+		length="6" name="employeeCode" type="string"/> <property column="ENGFIRSTNAME" 
+		generated="never" lazy="false" length="255" name="engFirstName" type="string"/> 
+		<property column="ENGLASTNAME" generated="never" lazy="false" length="255" 
+		name="engLastName" type="string"/> <property column="STATUS" generated="never" 
+		lazy="false" length="20" name="status" type="string"/> <property column="THAIFIRSTNAME" 
+		generated="never" lazy="false" length="255" name="thaiFirstName" type="string"/> 
+		<property column="THAILASTNAME" generated="never" lazy="false" length="255" 
+		name="thaiLastName" type="string"/> </class> -->
+	<class name="mrf.model.PersonalInfo" table="L00901">
+		<id column="SN" name="SN" />
+		<property column="TNAME" generated="never" lazy="false"
+			length="20" name="TNAME" type="string" />
+		<property column="TSURNAME" generated="never" lazy="false"
+			length="30" name="TSURNAME" type="string" />
+		<property column="TITLE" generated="never" lazy="false"
+			length="60" name="TITLE" type="string" />
+		<property column="STAFFCODE" generated="never" lazy="false"
+			length="6" name="STAFFCODE" type="string" />
+		<property column="NATION" generated="never" lazy="false"
+			length="10" name="NATION" type="string" />
+		<property column="RELIGION" generated="never" lazy="false"
+			length="10" name="RELIGION" type="string" />
+		<property column="STATUS" generated="never" lazy="false"
+			length="16" name="STATUS" type="string" />
+		<property column="ENAME" generated="never" lazy="false"
+			length="30" name="ENAME" type="string" />
+		<property column="ESURNAME" generated="never" lazy="false"
+			length="30" name="ESURNAME" type="string" />
+		<property column="PREFIX" generated="never" lazy="false"
+			length="20" name="PREFIX" type="string" />
+		<property column="FLAG" generated="never" lazy="false"
+			length="1" name="FLAG" type="string" />
+		<property column="TMIDDLE" generated="never" lazy="false"
+			length="30" name="TMIDDLE" type="string" />
+		<property column="EMIDDLE" generated="never" lazy="false"
+			length="30" name="EMIDDLE" type="string" />
+		<property column="FLAGN" generated="never" lazy="false"
+			length="1" name="FLAGN" type="string" />
+		<property column="EFFECTIVE" generated="never" lazy="false"
+			length="10" name="EFFECTIVE" type="string" />
+		<property column="DOCUMENT" generated="never" lazy="false"
+			length="100" name="DOCUMENT" type="string" />
+		<property column="EFORNAME" generated="never" lazy="false"
+			length="20" name="EFORNAME" type="string" />
+		<property column="REVERSE" generated="never" lazy="false"
+			length="10" name="REVERSE" type="string" />
+		<property column="ACTION" generated="never" lazy="false"
+			length="10" name="ACTION" type="string" />
+	</class>
+	<class name="mrf.model.EmployeeInfo" table="L00910">
+		<id column="SN" name="SN" />
+		<property column="LINKP" generated="never" lazy="false" name="LINKP"
+			type="long" />
+		<property column="SALARY" generated="never" lazy="false"
+			length="7" name="SALARY" type="string" />
+		<property column="LICENSE" generated="never" lazy="false"
+			length="30" name="LICENSE" type="string" />
+		<property column="ALLOWANCE" generated="never" lazy="false"
+			length="30" name="ALLOWANCE" type="string" />
+		<property column="MANAGE" generated="never" lazy="false"
+			length="30" name="MANAGE" type="string" />
+		<property column="DEPFINANCE" generated="never" lazy="false"
+			length="12" name="DEPFINANCE" type="string" />
+		<property column="LOCATION" generated="never" lazy="false"
+			length="46" name="LOCATION" type="string" />
+		<property column="POSITIONX" generated="never" lazy="false"
+			length="240" name="POSITIONX" type="string" />
+		<property column="DEPPERSON" generated="never" lazy="false"
+			length="12" name="DEPPERSON" type="string" />
+		<property column="FLOCATION" generated="never" lazy="false"
+			length="46" name="FLOCATION" type="string" />
+		<property column="ACTING" generated="never" lazy="false"
+			length="10" name="ACTING" type="string" />
+		<property column="COMPETEN" generated="never" lazy="false"
+			length="240" name="COMPETEN" type="string" />
+		<property column="MAXSALARY" generated="never" lazy="false"
+			length="7" name="MAXSALARY" type="string" />
+		<property column="BSALARY" generated="never" lazy="false"
+			length="7" name="BSALARY" type="string" />
+		<property column="MORDER" generated="never" lazy="false"
+			name="MORDER" type="integer" />
+	</class>
+	<class name="mrf.model.Photo" table="L00906">
+		<id column="STAFFCODE" name="staffCode"/>
+		<property name="photo" column="PHOTO" type="binary"/>
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui" xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head></h:head>
+<body>
+	<h:outputStylesheet library="css" name="global.css" />
+	<div id="maindiv" style="width: 1100px; margin: 0 auto;">
+		<h:form id="menuForm">
+<!--			<p:menubar>-->
+<!--				<p:menuitem value="Request" action="request?faces-redirect=true" />-->
+<!--				<p:menuitem value="Perform" action="perform?faces-redirect=true" />-->
+<!--				<p:menuitem value="Approve" action="approve?faces-redirect=true" />-->
+<!--				<p:menuitem value="Admin" action="admin?faces-redirect=true" />-->
+<!--				<p:menuitem value="Logout" action="login?faces-redirect=true" />-->
+<!--			</p:menubar>-->
+			<p:toolbar>
+				<p:toolbarGroup>
+					<p:commandButton value="Request" action="#{menuManager.requestPage}" icon="ui-icon-document" disabled="#{!menuManager.requester}"/>
+					<p:separator/>
+					<p:commandButton value="Perform" action="#{menuManager.performPage}" icon="ui-icon-gear" disabled="#{!menuManager.performer}"/>
+					<p:separator/>
+					<p:commandButton value="Approve" action="#{menuManager.approvePage}" icon="ui-icon-check" disabled="#{!menuManager.approver}"/>
+					<p:separator/>
+					<p:commandButton value="Admin" action="#{menuManager.adminPage}" icon="ui-icon-wrench" disabled="#{!menuManager.admin}"/>
+				</p:toolbarGroup>
+				<p:toolbarGroup align="right">
+					<p:commandButton value="Logout" action="#{loginManager.logout}" icon="ui-icon ui-icon-power" disabled="#{!menuManager.loggedIn}"/>
+				</p:toolbarGroup>
+			</p:toolbar>
+		</h:form>
+	</div>
+</body>
+</html>

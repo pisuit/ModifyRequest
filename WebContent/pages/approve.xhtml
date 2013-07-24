@@ -1,0 +1,656 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+</h:head>
+<body>
+	<h:outputStylesheet library="css" name="global.css" />
+	<div class="ui-widget ui-widget-header"
+		style="width: 1100px; margin: 0 auto">
+		<div id="logo">
+			<h1 style="color: #4F4F4F">Maintenance</h1>
+		</div>
+	</div>
+	<p:spacer height="10" />
+	<ui:include src="menu.xhtml" />
+	<p:spacer height="15" />
+	<div id="maindiv" style="width: 1100px; margin: 0 auto;">
+		<p:growl id="growl" showDetail="true" />
+		<h:outputText value="Approver Portion" style="color:#4F4F4F" />
+		<p:separator />
+		<p:spacer height="5" />
+		<h:form id="approverform">
+			<p:fieldset legend="Performed List" toggleable="true">
+				<p:dataTable id="formList" rows="10" paginator="true"
+					paginatorPosition="bottom"
+					value="#{approveManager.viewPerformedFormList}" var="form">
+					<p:column headerText="Number" style="text-align:center">
+						<h:outputText value="#{form.formNumber}">
+							<f:convertNumber pattern="0000" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Post Date">
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+						<br />
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Perform Date">
+						<p:panelGrid style="font-size: 100% !important">
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="to" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:column>
+					<p:column headerText="Requester">
+						<h:outputText value="#{form.requester.username}" />
+					</p:column>
+					<p:column headerText="Performer">
+						<h:outputText value="#{form.performer.username}" />
+					</p:column>
+					<p:column headerText="System">
+						<h:outputText value="#{form.system.name}" />
+					</p:column>
+					<p:column headerText="Database">
+						<h:outputText value="#{form.databaseTo.name}" />
+					</p:column>
+					<p:column headerText="Status">
+						<h:outputText value="#{form.processStatus.value}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="View" icon="ui-icon-search"
+							oncomplete="formViewDialog.show()"
+							action="#{approveManager.setCurrentForm}"
+							update=":approverform:viewform">
+							<f:setPropertyActionListener target="#{approveManager.viewForm}"
+								value="#{form}"></f:setPropertyActionListener>
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Approve" icon="ui-icon-check"
+							onclick="remarkDialog.show();">
+							<f:setPropertyActionListener target="#{approveManager.editForm}"
+								value="#{form}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon-refresh"
+					action="#{approveManager.createPerformedFormList}" value="Refresh"
+					update="formList" widgetVar="refreshPerformedListButton"
+					onstart="refreshPerformedListButton.disable();"
+					onsuccess="refreshPerformedListButton.enable();" />
+			</p:fieldset>
+			<p:spacer height="20" />
+			<p:fieldset legend="Approved List" toggleable="true" collapsed="true">
+				<p:dataTable id="formList2" rows="10" paginator="true"
+					paginatorPosition="bottom"
+					value="#{approveManager.viewApprovedFormList}" var="form">
+					<p:column headerText="Number" style="text-align:center">
+						<h:outputText value="#{form.formNumber}">
+							<f:convertNumber pattern="0000" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Post Date">
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+						<br />
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Perform Date">
+						<p:panelGrid style="font-size: 100% !important">
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="to" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:column>
+					<p:column headerText="Requester">
+						<h:outputText value="#{form.requester.username}" />
+					</p:column>
+					<p:column headerText="Performer">
+						<h:outputText value="#{form.performer.username}" />
+					</p:column>
+					<p:column headerText="System">
+						<h:outputText value="#{form.system.name}" />
+					</p:column>
+					<p:column headerText="Database">
+						<h:outputText value="#{form.databaseTo.name}" />
+					</p:column>
+					<p:column headerText="Status">
+						<h:outputText value="#{form.processStatus.value}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="View" icon="ui-icon-search"
+							oncomplete="formViewDialog2.show()"
+							action="#{approveManager.setCurrentForm}"
+							update=":approverform:viewform2">
+							<f:setPropertyActionListener target="#{approveManager.viewForm}"
+								value="#{form}"></f:setPropertyActionListener>
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Edit" icon="ui-icon-pencil"
+							oncomplete="editRemarkDialog.show();"
+							update=":approverform:editremarkdialog"
+							disabled="#{form.approver.username != sessionScope.user_key.username}">
+							<f:setPropertyActionListener target="#{approveManager.editForm2}"
+								value="#{form}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon-refresh"
+					action="#{approveManager.createApprovedFormList}" value="Refresh"
+					update="formList2" widgetVar="refreshApprovedListButton"
+					onstart="refreshApprovedListButton.disable();"
+					onsuccess="refreshApprovedListButton.enable();" />
+			</p:fieldset>
+			<p:dialog header="Add Approver Remark" widgetVar="remarkDialog"
+				id="inputremarkdialog" modal="false" resizable="false"
+				showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="Remark" id="inputremark">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Remark:" for="remark" />
+						<p:inputTextarea id="remark"
+							value="#{approveManager.editForm.approveRemark}"
+							autoResize="false" style="height:100px;width:500px"
+							counter="counter" counterTemplate="{0} characters remaining."
+							maxlength="4000"></p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counter" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset>
+					<h:panelGrid columns="2">
+						<p:commandButton action="#{approveManager.saveEditForm}"
+							value="Submit" oncomplete="remarkDialog.hide()"
+							update="formList,formList2,inputremark,:growl" disabled="false"
+							widgetVar="addApproverRemarkButton"
+							onstart="addApproverRemarkButton.disable();"
+							onsuccess="addApproverRemarkButton.enable();" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="Edit Approver Remark" widgetVar="editRemarkDialog"
+				id="editremarkdialog" modal="false" resizable="false"
+				showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="Remark" id="editremark">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Remark:" for="remark2" />
+						<p:inputTextarea id="remark2"
+							value="#{approveManager.editForm2.approveRemark}"
+							autoResize="false" style="height:100px;width:500px"
+							counter="counter2" counterTemplate="{0} characters remaining."
+							maxlength="4000"></p:inputTextarea>
+							<h:outputText value="" />
+							<h:outputText id="counter2" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset>
+					<h:panelGrid columns="2">
+						<p:commandButton action="#{approveManager.saveEditForm2}"
+							value="Submit" oncomplete="editRemarkDialog.hide()"
+							update=":growl" disabled="false"
+							widgetVar="editApproverRemarkButton"
+							onselect="editApproverRemarkButton.disable();"
+							onsuccess="editApproverRemarkButton.enable();" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="View Request" widgetVar="formViewDialog"
+				id="viewform" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				style="font-size: 100% !important">
+				<p:scrollPanel
+					style="height:500px;width:710px;border:none;font-size: 100% !important"
+					mode="native">
+					<p:fieldset legend="General Information" id="viewgeneralinfo">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Refer Form:" for="viewreferform" />
+							<p:inputText id="viewreferform"
+								value="#{approveManager.viewForm.referForm}" readonly="true"></p:inputText>
+							<h:outputLabel value="System:" for="viewsystem" />
+							<p:selectOneMenu value="#{approveManager.viewSystemID}"
+								id="viewsystem" disabled="true">
+								<f:selectItems value="#{approveManager.systemSelectItemList}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Database" id="viewdatabase">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Objective:" />
+							<h:panelGroup>
+								<p:fieldset legend="DML" style="float:left">
+									<h:panelGrid columns="2">
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.backupData}" disabled="true" />
+										<h:outputLabel value="Backup Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.deleteData}" disabled="true" />
+										<h:outputLabel value="Delete Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.insertData}" disabled="true" />
+										<h:outputLabel value="Insert Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.queryData}" disabled="true" />
+										<h:outputLabel value="Query Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.transferData}"
+											disabled="true">
+										</p:selectBooleanCheckbox>
+										<h:outputLabel value="Transfer Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.updateData}" disabled="true" />
+										<h:outputLabel value="Update Data" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DDL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createIndex}"
+											disabled="true" />
+										<h:outputLabel value="Create Index" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.dropIndex}" disabled="true" />
+										<h:outputLabel value="Drop Index" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createTable}"
+											disabled="true" />
+										<h:outputLabel value="Create Table" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.dropTable}" disabled="true" />
+										<h:outputLabel value="Drop Table" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createView}" disabled="true" />
+										<h:outputLabel value="Create View" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.dropView}" disabled="true" />
+										<h:outputLabel value="Drop View" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.modifyTable}"
+											disabled="true" />
+										<h:outputLabel value="Modify Table" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DCL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createLogin}"
+											disabled="true" />
+										<h:outputLabel value="Create Login" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.revokeLogin}"
+											disabled="true" />
+										<h:outputLabel value="Revoke Login" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.grantData}" disabled="true" />
+										<h:outputLabel value="Grant Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.revokeData}" disabled="true" />
+										<h:outputLabel value="Revoke Data" />
+									</h:panelGrid>
+								</p:fieldset>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Server Type">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Database Name(From):"
+								for="viewdatabasenamefrom"
+								rendered="#{approveManager.viewForm.transferData == true}" />
+							<p:selectOneMenu value="#{approveManager.viewDatabaseFromID}"
+								id="viewdatabasenamefrom" disabled="true"
+								rendered="#{approveManager.viewForm.transferData == true}">
+								<f:selectItems value="#{approveManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(From):"
+								for="viewservertypefrom"
+								rendered="#{approveManager.viewForm.transferData == true}" />
+							<p:selectOneRadio value="#{approveManager.viewServerTypeFrom}"
+								id="viewservertypefrom" disabled="true"
+								rendered="#{approveManager.viewForm.transferData == true}">
+								<f:selectItems
+									value="#{approveManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+							<h:outputLabel value="Database Name(To):"
+								for="viewdatabasenameto" />
+							<p:selectOneMenu value="#{approveManager.viewDatabaseToID}"
+								id="viewdatabasenameto" disabled="true">
+								<f:selectItems value="#{approveManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(To):" for="viewservertypeto" />
+							<p:selectOneRadio value="#{approveManager.viewServerTypeTo}"
+								id="viewservertypeto" disabled="true">
+								<f:selectItems
+									value="#{approveManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Additional Information" id="viewtransfer">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Reason:" for="viewreason" />
+							<p:inputTextarea id="viewreason"
+								value="#{approveManager.viewForm.reason}" autoResize="false"
+								style="height:100px;width:500px" readonly="true"></p:inputTextarea>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Performer Remark">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Remark:" for="remark3" />
+							<p:inputTextarea id="remark3"
+								value="#{approveManager.viewForm.performRemark}"
+								style="height:100px;width:500px" readonly="true"
+								autoResize="false" />
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Attachment">
+						<div style="width: 48%; float: left">
+							<h:outputLabel value="Requester Files" />
+							<p:dataList value="#{approveManager.viewRequesterDownloadList}"
+								var="file" id="viewRequesterDownloadList">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+						<div style="width: 48%; float: left; margin-left: 10px">
+							<h:outputLabel value="Performer Files" />
+							<p:dataList value="#{approveManager.viewPerformerDownloadList}"
+								var="file" id="viewPerformerDownloadList">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+					</p:fieldset>
+				</p:scrollPanel>
+			</p:dialog>
+			<p:dialog header="View Request" widgetVar="formViewDialog2"
+				id="viewform2" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				style="font-size: 100% !important">
+				<p:scrollPanel
+					style="height:500px;width:710px;border:none;font-size: 100% !important"
+					mode="native">
+					<p:fieldset legend="General Information" id="viewgeneralinfo2">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Refer Form:" for="viewreferform2" />
+							<p:inputText id="viewreferform2"
+								value="#{approveManager.viewForm.referForm}" readonly="true"></p:inputText>
+							<h:outputLabel value="System:" for="viewsystem2" />
+							<p:selectOneMenu value="#{approveManager.viewSystemID}"
+								id="viewsystem2" disabled="true">
+								<f:selectItems value="#{approveManager.systemSelectItemList}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Database" id="viewdatabase2">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Objective:" />
+							<h:panelGroup>
+								<p:fieldset legend="DML" style="float:left">
+									<h:panelGrid columns="2">
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.backupData}" disabled="true" />
+										<h:outputLabel value="Backup Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.deleteData}" disabled="true" />
+										<h:outputLabel value="Delete Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.insertData}" disabled="true" />
+										<h:outputLabel value="Insert Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.queryData}" disabled="true" />
+										<h:outputLabel value="Query Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.transferData}"
+											disabled="true">
+										</p:selectBooleanCheckbox>
+										<h:outputLabel value="Transfer Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.updateData}" disabled="true" />
+										<h:outputLabel value="Update Data" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DDL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createIndex}"
+											disabled="true" />
+										<h:outputLabel value="Create Index" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.dropIndex}" disabled="true" />
+										<h:outputLabel value="Drop Index" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createTable}"
+											disabled="true" />
+										<h:outputLabel value="Create Table" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.dropTable}" disabled="true" />
+										<h:outputLabel value="Drop Table" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createView}" disabled="true" />
+										<h:outputLabel value="Create View" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.dropView}" disabled="true" />
+										<h:outputLabel value="Drop View" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.modifyTable}"
+											disabled="true" />
+										<h:outputLabel value="Modify Table" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DCL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.createLogin}"
+											disabled="true" />
+										<h:outputLabel value="Create Login" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.revokeLogin}"
+											disabled="true" />
+										<h:outputLabel value="Revoke Login" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.grantData}" disabled="true" />
+										<h:outputLabel value="Grant Data" />
+										<p:selectBooleanCheckbox
+											value="#{approveManager.viewForm.revokeData}" disabled="true" />
+										<h:outputLabel value="Revoke Data" />
+									</h:panelGrid>
+								</p:fieldset>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Server Type">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Database Name(From):"
+								for="viewdatabasenamefrom2"
+								rendered="#{approveManager.viewForm.transferData == true}" />
+							<p:selectOneMenu value="#{approveManager.viewDatabaseFromID}"
+								id="viewdatabasenamefrom2" disabled="true"
+								rendered="#{approveManager.viewForm.transferData == true}">
+								<f:selectItems value="#{approveManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(From):"
+								for="viewservertypefrom2"
+								rendered="#{approveManager.viewForm.transferData == true}" />
+							<p:selectOneRadio value="#{approveManager.viewServerTypeFrom}"
+								id="viewservertypefrom2" disabled="true"
+								rendered="#{approveManager.viewForm.transferData == true}">
+								<f:selectItems
+									value="#{approveManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+							<h:outputLabel value="Database Name(To):"
+								for="viewdatabasenameto2"
+								rendered="#{approveManager.viewForm.transferData == true}" />
+							<p:selectOneMenu value="#{approveManager.viewDatabaseToID}"
+								id="viewdatabasenameto2" disabled="true"
+								rendered="#{approveManager.viewForm.transferData == true}">
+								<f:selectItems value="#{approveManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(To):" for="viewservertypeto2" />
+							<p:selectOneRadio value="#{approveManager.viewServerTypeTo}"
+								id="viewservertypeto2" disabled="true">
+								<f:selectItems
+									value="#{approveManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Additional Information" id="viewtransfer2">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Reason:" for="viewreason2" />
+							<p:inputTextarea id="viewreason2"
+								value="#{approveManager.viewForm.reason}" autoResize="false"
+								style="height:100px;width:500px" readonly="true"></p:inputTextarea>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Performer Remark">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Remark:" for="remark4" />
+							<p:inputTextarea id="remark4"
+								value="#{approveManager.viewForm.performRemark}"
+								style="height:100px;width:500px" readonly="true"
+								autoResize="false" />
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Approver Remark">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Remark:" for="remark5" />
+							<p:inputTextarea id="remark5"
+								value="#{approveManager.viewForm.approveRemark}"
+								style="height:100px;width:500px" readonly="true"
+								autoResize="false" />
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Attachment">
+						<div style="width: 48%; float: left; margin-left: 10px">
+							<h:outputLabel value="Requester Files" />
+							<p:dataList value="#{approveManager.viewRequesterDownloadList2}"
+								var="file" id="viewRequesterDownloadList2">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+						<div style="width: 48%; float: left">
+							<h:outputLabel value="Performer Files" />
+							<p:dataList value="#{approveManager.viewPerformerDownloadList2}"
+								var="file" id="viewPerformerDownloadList2">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+					</p:fieldset>
+				</p:scrollPanel>
+			</p:dialog>
+		</h:form>
+	</div>
+	<p:spacer height="80" />
+	<ui:include src="footer.xhtml" />
+</body>
+</html>

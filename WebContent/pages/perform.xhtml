@@ -1,0 +1,651 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+</h:head>
+<body>
+	<h:outputStylesheet library="css" name="global.css" />
+	<div class="ui-widget ui-widget-header"
+		style="width: 1100px; margin: 0 auto">
+		<div id="logo">
+			<h1 style="color: #4F4F4F">Maintenance</h1>
+		</div>
+	</div>
+	<p:spacer height="10" />
+	<ui:include src="menu.xhtml" />
+	<p:spacer height="15" />
+	<div id="maindiv" style="width: 1100px; margin: 0 auto;">
+		<p:growl id="growl" showDetail="true" />
+		<h:outputText value="Performer Portion" style="color:#4F4F4F" />
+		<p:separator />
+		<p:spacer height="5" />
+		<h:form id="performerform">
+			<p:fieldset legend="Requesting List" toggleable="true">
+				<p:dataTable id="formList" rows="10" paginator="true"
+					paginatorPosition="bottom" value="#{performManager.formList}"
+					var="form">
+					<p:column headerText="Number" style="text-align:center">
+						<h:outputText value="#{form.formNumber}">
+							<f:convertNumber pattern="0000" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Post Date">
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+						<br />
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Requester">
+						<h:outputText value="#{form.requester.username}" />
+					</p:column>
+					<p:column headerText="System">
+						<h:outputText value="#{form.system.name}" />
+					</p:column>
+					<p:column headerText="Database">
+						<h:outputText value="#{form.databaseTo.name}" />
+					</p:column>
+					<p:column headerText="Status">
+						<h:outputText value="#{form.processStatus.value}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="View" icon="ui-icon-search"
+							oncomplete="formViewDialog.show()"
+							action="#{performManager.setCurrentForm}"
+							update=":performerform:viewform">
+							<f:setPropertyActionListener target="#{performManager.viewForm}"
+								value="#{form}"></f:setPropertyActionListener>
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Perform" icon="ui-icon-gear"
+							onclick="remarkDialog.show()">
+							<f:setPropertyActionListener target="#{performManager.editForm}"
+								value="#{form}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon-refresh"
+					action="#{performManager.createFormList}" value="Refresh"
+					update="formList" widgetVar="refreshRequestListButton"
+					onstart="refreshRequestListButton.disable();"
+					onsuccess="refreshRequestListButton.enable();" />
+			</p:fieldset>
+			<p:spacer height="20" />
+			<p:fieldset legend="Performed List" toggleable="true"
+				collapsed="true">
+				<p:dataTable id="formList2" rows="10" paginator="true"
+					paginatorPosition="bottom" value="#{performManager.viewFormList}"
+					var="form">
+					<p:column headerText="Number" style="text-align:center">
+						<h:outputText value="#{form.formNumber}">
+							<f:convertNumber pattern="0000" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Post Date">
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+						<br />
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Perform Date">
+						<p:panelGrid style="font-size: 100% !important">
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="to" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:column>
+					<p:column headerText="Requester">
+						<h:outputText value="#{form.requester.username}" />
+					</p:column>
+					<p:column headerText="Performer">
+						<h:outputText value="#{form.performer.username}" />
+					</p:column>
+					<p:column headerText="System">
+						<h:outputText value="#{form.system.name}" />
+					</p:column>
+					<p:column headerText="Database">
+						<h:outputText value="#{form.databaseTo.name}" />
+					</p:column>
+					<p:column headerText="Status">
+						<h:outputText value="#{form.processStatus.value}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="View" icon="ui-icon-search"
+							oncomplete="formViewDialog2.show()"
+							action="#{performManager.setCurrentForm}"
+							update=":performerform:viewform2">
+							<f:setPropertyActionListener target="#{performManager.viewForm}"
+								value="#{form}"></f:setPropertyActionListener>
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton value="Edit" icon="ui-icon-pencil"
+							oncomplete="editRemarkDialog.show();"
+							update=":performerform:editremarkdialog"
+							disabled="#{form.performer.username != sessionScope.user_key.username}">
+							<f:setPropertyActionListener target="#{performManager.editForm2}"
+								value="#{form}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton oncomplete="attachDialog.show();"
+							value="Attachment" icon="ui-icon-document"
+							action="#{performManager.createPerformerDownloadList}"
+							update=":performerform:attachform"
+							disabled="#{form.performer.username != sessionScope.user_key.username}">
+							<f:setPropertyActionListener
+								target="#{performManager.downloadedForm}" value="#{form}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon-refresh"
+					action="#{performManager.createPerformedFormList}" value="Refresh"
+					update="formList2" widgetVar="refreshPerformedListButton"
+					onstart="refreshPerformedListButton.disable();"
+					onsuccess="refreshPerformedListButton.enable();" />
+			</p:fieldset>
+			<p:dialog header="Add Performer Remark" widgetVar="remarkDialog"
+				id="inputremarkdialog" modal="false" resizable="false"
+				showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="Performing Period" id="inputtime">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Start:" />
+						<p:calendar value="#{performManager.editForm.startPerform}"
+							pattern="dd/MM/yyyy HH:mm" showOn="button" />
+						<h:outputLabel value="End:" />
+						<p:calendar value="#{performManager.editForm.endPerform}"
+							pattern="dd/MM/yyyy HH:mm" showOn="button" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset legend="Remark" id="inputremark">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Remark:" for="remark" />
+						<p:inputTextarea id="remark"
+							value="#{performManager.editForm.performRemark}"
+							autoResize="false" style="height:100px;width:500px"
+							counter="counter" counterTemplate="{0} characters remaining."
+							maxlength="4000"></p:inputTextarea>
+						<h:outputText value="" />
+						<h:outputText id="counter" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset>
+					<h:panelGrid columns="2">
+						<p:commandButton action="#{performManager.saveEditForm}"
+							value="Submit" oncomplete="remarkDialog.hide()"
+							update="formList,formList2,inputremark,:growl,inputtime"
+							disabled="false" widgetVar="addRemarkButton"
+							onstart="addRemarkButton.disable();"
+							onsuccess="addRemarkButton.enable();" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="Edit Performer Remark" widgetVar="editRemarkDialog"
+				id="editremarkdialog" modal="false" resizable="false"
+				showEffect="clip" hideEffect="clip">
+				<p:fieldset legend="Performing Period" id="inputtime2">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Start:" />
+						<p:calendar value="#{performManager.editForm2.startPerform}"
+							pattern="dd/MM/yyyy HH:mm" showOn="button" />
+						<h:outputLabel value="End:" />
+						<p:calendar value="#{performManager.editForm2.endPerform}"
+							pattern="dd/MM/yyyy HH:mm" showOn="button" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset legend="Remark" id="editremark">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Remark:" for="remark2" />
+						<p:inputTextarea id="remark2"
+							value="#{performManager.editForm2.performRemark}"
+							autoResize="false" style="height:100px;width:500px"
+							counter="counter2" counterTemplate="{0} characters remaining."
+							maxlength="4000"></p:inputTextarea>
+							<h:outputText value=""/>
+							<h:outputText id="counter2" />
+					</h:panelGrid>
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset>
+					<h:panelGrid columns="2">
+						<p:commandButton action="#{performManager.saveEditForm2}"
+							value="Submit" oncomplete="editRemarkDialog.hide()"
+							update=":growl, inputtime2" disabled="false"
+							widgetVar="editRemarkButton"
+							onstart="editRemarkButton.disable();"
+							onsuccess="editRemarkButton.enable();" />
+						<p:ajaxStatus>
+							<f:facet name="start">
+								<h:graphicImage url="../resources/images/ajax-loader.gif" />
+							</f:facet>
+							<f:facet name="complete">
+								<h:outputText value="" />
+							</f:facet>
+						</p:ajaxStatus>
+					</h:panelGrid>
+				</p:fieldset>
+			</p:dialog>
+			<p:dialog header="View Request" widgetVar="formViewDialog"
+				id="viewform" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				style="font-size: 100% !important">
+				<p:scrollPanel
+					style="height:500px;width:710px;border:none; font-size: 100% !important"
+					mode="native">
+					<p:fieldset legend="General Information" id="viewgeneralinfo">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Refer Form:" for="viewreferform" />
+							<p:inputText id="viewreferform"
+								value="#{performManager.viewForm.referForm}" readonly="true"></p:inputText>
+							<h:outputLabel value="System:" for="viewsystem" />
+							<p:selectOneMenu value="#{performManager.viewSystemID}"
+								id="viewsystem" disabled="true">
+								<f:selectItems value="#{performManager.systemSelectItemList}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Database" id="viewdatabase">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Objective:" />
+							<h:panelGroup>
+								<p:fieldset legend="DML" style="float:left">
+									<h:panelGrid columns="2">
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.backupData}" disabled="true" />
+										<h:outputLabel value="Backup Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.deleteData}" disabled="true" />
+										<h:outputLabel value="Delete Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.insertData}" disabled="true" />
+										<h:outputLabel value="Insert Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.queryData}" disabled="true" />
+										<h:outputLabel value="Query Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.transferData}"
+											disabled="true">
+										</p:selectBooleanCheckbox>
+										<h:outputLabel value="Transfer Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.updateData}" disabled="true" />
+										<h:outputLabel value="Update Data" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DDL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createIndex}"
+											disabled="true" />
+										<h:outputLabel value="Create Index" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.dropIndex}" disabled="true" />
+										<h:outputLabel value="Drop Index" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createTable}"
+											disabled="true" />
+										<h:outputLabel value="Create Table" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.dropTable}" disabled="true" />
+										<h:outputLabel value="Drop Table" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createView}" disabled="true" />
+										<h:outputLabel value="Create View" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.dropView}" disabled="true" />
+										<h:outputLabel value="Drop View" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.modifyTable}"
+											disabled="true" />
+										<h:outputLabel value="Modify Table" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DCL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createLogin}"
+											disabled="true" />
+										<h:outputLabel value="Create Login" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.revokeLogin}"
+											disabled="true" />
+										<h:outputLabel value="Revoke Login" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.grantData}" disabled="true" />
+										<h:outputLabel value="Grant Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.revokeData}" disabled="true" />
+										<h:outputLabel value="Revoke Data" />
+									</h:panelGrid>
+								</p:fieldset>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Server Type">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Database Name(From):"
+								for="viewdatabasenamefrom"
+								rendered="#{performManager.viewForm.transferData == true}" />
+							<p:selectOneMenu value="#{performManager.viewDatabaseFromID}"
+								id="viewdatabasenamefrom" disabled="true"
+								rendered="#{performManager.viewForm.transferData == true}">
+								<f:selectItems value="#{performManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(From):"
+								for="viewservertypefrom"
+								rendered="#{performManager.viewForm.transferData == true}" />
+							<p:selectOneRadio value="#{performManager.viewServerTypeFrom}"
+								id="viewservertypefrom" disabled="true"
+								rendered="#{performManager.viewForm.transferData == true}">
+								<f:selectItems
+									value="#{performManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+							<h:outputLabel value="Database Name(To):"
+								for="viewdatabasenameto" />
+							<p:selectOneMenu value="#{performManager.viewDatabaseToID}"
+								id="viewdatabasenameto" disabled="true">
+								<f:selectItems value="#{performManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(To):" for="viewservertypeto" />
+							<p:selectOneRadio value="#{performManager.viewServerTypeTo}"
+								id="viewservertypeto" disabled="true">
+								<f:selectItems
+									value="#{performManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Additional Information" id="viewtransfer">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Reason:" for="viewreason" />
+							<p:inputTextarea id="viewreason"
+								value="#{performManager.viewForm.reason}" autoResize="false"
+								style="height:100px;width:500px" readonly="true"></p:inputTextarea>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Attachment">
+						<div style="width: 48%;">
+							<h:outputLabel value="Requester Files" />
+							<p:dataList value="#{performManager.viewRequesterDownloadList}"
+								var="file" id="viewRequesterDownloadList">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+					</p:fieldset>
+				</p:scrollPanel>
+			</p:dialog>
+			<p:dialog header="View Request" widgetVar="formViewDialog2"
+				id="viewform2" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				style="font-size: 100% !important">
+				<p:scrollPanel
+					style="height:500px;width:710px;border:none;font-size: 100% !important"
+					mode="native">
+					<p:fieldset legend="General Information" id="viewgeneralinfo2">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Refer Form:" for="viewreferform2" />
+							<p:inputText id="viewreferform2"
+								value="#{performManager.viewForm.referForm}" readonly="true"></p:inputText>
+							<h:outputLabel value="System:" for="viewsystem2" />
+							<p:selectOneMenu value="#{performManager.viewSystemID}"
+								id="viewsystem2" disabled="true">
+								<f:selectItems value="#{performManager.systemSelectItemList}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Database" id="viewdatabase2">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Objective:" />
+							<h:panelGroup>
+								<p:fieldset legend="DML" style="float:left">
+									<h:panelGrid columns="2">
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.backupData}" disabled="true" />
+										<h:outputLabel value="Backup Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.deleteData}" disabled="true" />
+										<h:outputLabel value="Delete Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.insertData}" disabled="true" />
+										<h:outputLabel value="Insert Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.queryData}" disabled="true" />
+										<h:outputLabel value="Query Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.transferData}"
+											disabled="true">
+										</p:selectBooleanCheckbox>
+										<h:outputLabel value="Transfer Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.updateData}" disabled="true" />
+										<h:outputLabel value="Update Data" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DDL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createIndex}"
+											disabled="true" />
+										<h:outputLabel value="Create Index" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.dropIndex}" disabled="true" />
+										<h:outputLabel value="Drop Index" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createTable}"
+											disabled="true" />
+										<h:outputLabel value="Create Table" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.dropTable}" disabled="true" />
+										<h:outputLabel value="Drop Table" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createView}" disabled="true" />
+										<h:outputLabel value="Create View" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.dropView}" disabled="true" />
+										<h:outputLabel value="Drop View" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.modifyTable}"
+											disabled="true" />
+										<h:outputLabel value="Modify Table" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DCL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.createLogin}"
+											disabled="true" />
+										<h:outputLabel value="Create Login" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.revokeLogin}"
+											disabled="true" />
+										<h:outputLabel value="Revoke Login" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.grantData}" disabled="true" />
+										<h:outputLabel value="Grant Data" />
+										<p:selectBooleanCheckbox
+											value="#{performManager.viewForm.revokeData}" disabled="true" />
+										<h:outputLabel value="Revoke Data" />
+									</h:panelGrid>
+								</p:fieldset>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Server Type">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Database Name(From):"
+								for="viewdatabasenamefrom2"
+								rendered="#{performManager.viewForm.transferData == true}" />
+							<p:selectOneMenu value="#{performManager.viewDatabaseFromID}"
+								id="viewdatabasenamefrom2" disabled="true"
+								rendered="#{performManager.viewForm.transferData == true}">
+								<f:selectItems value="#{performManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(From):"
+								for="viewservertypefrom2"
+								rendered="#{performManager.viewForm.transferData == true}" />
+							<p:selectOneRadio value="#{performManager.viewServerTypeFrom}"
+								id="viewservertypefrom2" disabled="true"
+								rendered="#{performManager.viewForm.transferData == true}">
+								<f:selectItems
+									value="#{performManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+							<h:outputLabel value="Database Name(To):"
+								for="viewdatabasenameto2" />
+							<p:selectOneMenu value="#{performManager.viewDatabaseToID}"
+								id="viewdatabasenameto2" disabled="true">
+								<f:selectItems value="#{performManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(To):" for="viewservertypeto2" />
+							<p:selectOneRadio value="#{performManager.viewServerTypeTo}"
+								id="viewservertypeto2" disabled="true">
+								<f:selectItems
+									value="#{performManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Additional Information" id="viewtransfer2">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Reason:" for="viewreason2" />
+							<p:inputTextarea id="viewreason2"
+								value="#{performManager.viewForm.reason}" autoResize="false"
+								style="height:100px;width:500px" readonly="true"></p:inputTextarea>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Performer Remark">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Remark:" for="remark3" />
+							<p:inputTextarea id="remark3"
+								value="#{performManager.viewForm.performRemark}"
+								style="height:100px;width:500px" readonly="true"
+								autoResize="false" />
+						</h:panelGrid>
+					</p:fieldset>
+					<p:fieldset legend="Attachment">
+						<div style="width: 48%; float: left">
+							<h:outputLabel value="Requester Files" />
+							<p:dataList value="#{performManager.viewRequesterDownloadList2}"
+								var="file" id="viewRequesterDownloadList2">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+						<div style="width: 48%; float: left; margin-left: 10px">
+							<h:outputLabel value="Performer Files" />
+							<p:dataList value="#{performManager.viewPerformerDownloadList}"
+								var="file" id="viewPerformerDownloadList">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+					</p:fieldset>
+				</p:scrollPanel>
+			</p:dialog>
+			<p:dialog header="Attachment" widgetVar="attachDialog"
+				id="attachform" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				width="500">
+				<p:fieldset legend="Upload" id="uploadfield">
+					<p:fileUpload fileUploadListener="#{performManager.saveFile}"
+						mode="advanced" multiple="true" update="downloadPerformerList" />
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset legend="Performer Files" id="downloadfield">
+					<p:dataList value="#{performManager.downloadPerformerList}"
+						var="file" id="downloadPerformerList">
+						<p:column>
+							<p:commandLink ajax="false" value="#{file.physicalName}">
+								<p:fileDownload value="#{file.file}" />
+							</p:commandLink>
+							<p:spacer width="10" />
+							<p:commandButton value="Delete"
+								onclick="deleteFileConfirm.show();" icon="ui-icon-trash">
+								<f:setPropertyActionListener
+									target="#{performManager.deletedFile}" value="#{file}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataList>
+				</p:fieldset>
+			</p:dialog>
+			<p:confirmDialog
+				message="This file will be deleted, do you want to proceed ?"
+				header="Delete File" severity="alert" widgetVar="deleteFileConfirm">
+				<p:commandButton value="Yes" oncomplete="deleteFileConfirm.hide()"
+					action="#{performManager.deleteFile}"
+					update=":growl,downloadPerformerList" />
+				<p:commandButton value="No" onclick="deleteFileConfirm.hide()" />
+			</p:confirmDialog>
+		</h:form>
+	</div>
+	<p:spacer height="80" />
+	<ui:include src="footer.xhtml" />
+</body>
+</html>

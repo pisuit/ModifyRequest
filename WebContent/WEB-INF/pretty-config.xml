@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="TIS-620"?>
+<pretty-config xmlns="http://ocpsoft.com/prettyfaces/3.3.2" 
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+               xsi:schemaLocation="http://ocpsoft.com/prettyfaces/3.3.2
+                                   		http://ocpsoft.com/xml/ns/prettyfaces/ocpsoft-pretty-faces-3.3.2.xsd">
+
+
+<url-mapping id="login"> 
+   <pattern value="/login/" /> 
+   <view-id value="/pages/login.jsf" />
+</url-mapping>
+
+<url-mapping id="request"> 
+   <pattern value="/request/" /> 
+   <view-id value="/pages/request.jsf" />
+</url-mapping>
+
+<url-mapping id="perform"> 
+   <pattern value="/perform/" /> 
+   <view-id value="/pages/perform.jsf" />
+</url-mapping>
+
+<url-mapping id="approve"> 
+   <pattern value="/approve/" /> 
+   <view-id value="/pages/approve.jsf" />
+</url-mapping>
+
+<url-mapping id="admin"> 
+   <pattern value="/admin/" /> 
+   <view-id value="/pages/admin.jsf" />
+</url-mapping>
+
+   <!-- Begin Example RewriteRules 
+   
+      // These are custom rewrite-rules, and are probably not necessary for your application.
+
+      <rewrite match="^/old-url/(\w+)/$" substitute="/new_url/$1/" redirect="301" />
+
+   -->
+   
+   <!-- Begin UrlMappings 
+      // These are examples of URL mappings, and should be customized for your application.
+
+      <url-mapping id="home"> 
+          <pattern value="/" /> 
+          <view-id value="/faces/index.jsf" />
+      </url-mapping> 
+      
+      <url-mapping id="store"> 
+          <pattern value="/store/" /> 
+          <view-id value="/faces/shop/store.jsf" />
+      </url-mapping> 
+      
+      <url-mapping id="viewCategory">
+          <pattern value="/store/#{ cat : bean.category }/" />
+          <view-id value="/faces/shop/store.jsf" />
+      </url-mapping>
+      
+      <url-mapping id="viewItem">
+          <pattern value="/store/#{ cat : bean.category }/#{ iid : bean.itemId }/" />
+          <view-id value="/faces/shop/item.jsf" /> 
+          <action>#{bean.loadItem}</action>
+      </url-mapping>
+   
+   -->
+
+</pretty-config>

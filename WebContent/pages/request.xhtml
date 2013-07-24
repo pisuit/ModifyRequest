@@ -1,0 +1,737 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+
+</h:head>
+<body>
+	<h:outputStylesheet library="css" name="global.css" />
+	<div class="ui-widget ui-widget-header"
+		style="width: 1100px; margin: 0 auto">
+		<div id="logo">
+			<h1 style="color: #4F4F4F">Maintenance</h1>
+		</div>
+	</div>
+	<p:spacer height="10" />
+	<ui:include src="menu.xhtml" />
+	<p:spacer height="15" />
+	<div id="maindiv" style="width: 1100px; margin: 0 auto;">
+		<p:growl id="growl" showDetail="true" />
+		<h:outputText value="Requester Portion" style="color:#4F4F4F" />
+		<p:separator />
+		<p:spacer height="5" />
+		<h:form id="requesterform" enctype="multipart/form-data">
+			<p:fieldset legend="Requesting List" toggleable="true">
+				<p:dataTable id="formList" rows="10" paginator="true"
+					paginatorPosition="bottom" value="#{requestManager.formList}"
+					var="form">
+					<p:column headerText="Number" style="text-align:center">
+						<h:outputText value="#{form.formNumber}" />
+					</p:column>
+					<p:column headerText="Post Date">
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+						<br />
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Requester">
+						<h:outputText value="#{form.requester.username}" />
+					</p:column>
+					<p:column headerText="System">
+						<h:outputText value="#{form.system.name}" />
+					</p:column>
+					<p:column headerText="Database">
+						<h:outputText value="#{form.databaseTo.name}" />
+					</p:column>
+					<p:column headerText="Status">
+						<h:outputText value="#{form.processStatus.value}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton action="#{requestManager.setCurrentForm}"
+							icon="ui-icon-pencil" oncomplete="formEditDialog.show()"
+							update=":requesterform:editform" value="Edit">
+							<f:setPropertyActionListener target="#{requestManager.editForm}"
+								value="#{form}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton oncomplete="attachDialog.show();"
+							value="Attachment" icon="ui-icon-document"
+							action="#{requestManager.createRequesterDownloadList}"
+							update=":requesterform:attachform">
+							<f:setPropertyActionListener
+								target="#{requestManager.downloadedForm}" value="#{form}" />
+						</p:commandButton>
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton icon="ui-icon-trash"
+							onclick="confirmation.show()" value="Delete">
+							<f:setPropertyActionListener
+								target="#{requestManager.deleteForm}" value="#{form}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon-plus"
+					onclick="formCreateDialog.show()" value="Create Request"
+					update="createscrollpanel" />
+			</p:fieldset>
+			<p:spacer height="20" />
+			<p:fieldset legend="Performed List" toggleable="true"
+				collapsed="true">
+				<p:dataTable id="formList2" rows="10" paginator="true"
+					paginatorPosition="bottom" value="#{requestManager.viewFormList}"
+					var="form">
+					<p:column headerText="Number" style="text-align:center">
+						<h:outputText value="#{form.formNumber}">
+							<f:convertNumber pattern="0000" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Post Date">
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="dd-MM-yyyy" />
+						</h:outputText>
+						<br />
+						<h:outputText value="#{form.postDate}">
+							<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="Perform Date">
+						<p:panelGrid style="font-size: 100% !important">
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="to" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="dd-MM-yyyy" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+							<p:row>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.startPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="" />
+								</p:column>
+								<p:column style="padding: 0px 1px !important;">
+									<h:outputText value="#{form.endPerform}">
+										<f:convertDateTime pattern="HH:mm:ss" timeZone="GMT+7" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:column>
+					<p:column headerText="Requester">
+						<h:outputText value="#{form.requester.username}" />
+					</p:column>
+					<p:column headerText="Performer">
+						<h:outputText value="#{form.performer.username}" />
+					</p:column>
+					<p:column headerText="System">
+						<h:outputText value="#{form.system.name}" />
+					</p:column>
+					<p:column headerText="Database">
+						<h:outputText value="#{form.databaseTo.name}" />
+					</p:column>
+					<p:column headerText="Status">
+						<h:outputText value="#{form.processStatus.value}" />
+					</p:column>
+					<p:column style="text-align:center">
+						<p:commandButton action="#{requestManager.setCurrentForm2}"
+							icon="ui-icon-search" oncomplete="formViewDialog.show()"
+							update=":requesterform:viewform" value="View">
+							<f:setPropertyActionListener target="#{requestManager.viewForm}"
+								value="#{form}" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+				<p:spacer height="5" />
+				<p:separator />
+				<p:commandButton icon="ui-icon-refresh"
+					action="#{requestManager.createViewFormList}" value="Refresh"
+					update="formList2" widgetVar="refreshPerformedListButton"
+					onstart="refreshPerformedListButton.disable();"
+					onsuccess="refreshPerformedListButton.enable();" />
+			</p:fieldset>
+			<p:dialog header="View Request" widgetVar="formViewDialog"
+				id="viewform" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				style="font-size: 100% !important">
+				<p:scrollPanel
+					style="height:500px;width:710px;border:none;font-size: 100% !important"
+					mode="native">
+					<p:fieldset legend="General Information" id="viewgeneralinfo">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Refer Form:" for="viewreferform" />
+							<p:inputText id="viewreferform"
+								value="#{requestManager.viewForm.referForm}" readonly="true"></p:inputText>
+							<h:outputLabel value="System:" for="viewsystem" />
+							<p:selectOneMenu value="#{requestManager.viewSystemID}"
+								id="viewsystem" disabled="true">
+								<f:selectItems value="#{requestManager.systemSelectItemList}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Database" id="viewdatabase">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Objective:" />
+							<h:panelGroup>
+								<p:fieldset legend="DML" style="float:left">
+									<h:panelGrid columns="2">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.backupData}" disabled="true" />
+										<h:outputLabel value="Backup Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.deleteData}" disabled="true" />
+										<h:outputLabel value="Delete Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.insertData}" disabled="true" />
+										<h:outputLabel value="Insert Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.queryData}" disabled="true" />
+										<h:outputLabel value="Query Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.transferData}"
+											disabled="true">
+										</p:selectBooleanCheckbox>
+										<h:outputLabel value="Transfer Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.updateData}" disabled="true" />
+										<h:outputLabel value="Update Data" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DDL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.createIndex}"
+											disabled="true" />
+										<h:outputLabel value="Create Index" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.dropIndex}" disabled="true" />
+										<h:outputLabel value="Drop Index" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.createTable}"
+											disabled="true" />
+										<h:outputLabel value="Create Table" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.dropTable}" disabled="true" />
+										<h:outputLabel value="Drop Table" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.createView}" disabled="true" />
+										<h:outputLabel value="Create View" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.dropView}" disabled="true" />
+										<h:outputLabel value="Drop View" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.modifyTable}"
+											disabled="true" />
+										<h:outputLabel value="Modify Table" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DCL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.createLogin}"
+											disabled="true" />
+										<h:outputLabel value="Create Login" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.revokeLogin}"
+											disabled="true" />
+										<h:outputLabel value="Revoke Login" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.grantData}" disabled="true" />
+										<h:outputLabel value="Grant Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.viewForm.revokeData}" disabled="true" />
+										<h:outputLabel value="Revoke Data" />
+									</h:panelGrid>
+								</p:fieldset>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Server Type">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Database Name(From):"
+								for="viewdatabasenamefrom"
+								rendered="#{requestManager.viewForm.transferData == true}" />
+							<p:selectOneMenu value="#{requestManager.viewDatabaseFromID}"
+								id="viewdatabasenamefrom" disabled="true"
+								rendered="#{requestManager.viewForm.transferData == true}">
+								<f:selectItems value="#{requestManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(From):"
+								for="viewservertypefrom"
+								rendered="#{requestManager.viewForm.transferData == true}" />
+							<p:selectOneRadio value="#{requestManager.viewServerTypeFrom}"
+								id="viewservertypefrom" disabled="true"
+								rendered="#{requestManager.viewForm.transferData == true}">
+								<f:selectItems
+									value="#{requestManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+							<h:outputLabel value="Database Name(To):"
+								for="viewdatabasenameto" />
+							<p:selectOneMenu value="#{requestManager.viewDatabaseToID}"
+								id="viewdatabasenameto" disabled="true">
+								<f:selectItems value="#{requestManager.databaseSelectItemList}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(To):" for="viewservertypeto" />
+							<p:selectOneRadio value="#{requestManager.viewServerTypeTo}"
+								id="viewservertypeto" disabled="true">
+								<f:selectItems
+									value="#{requestManager.serverTypeSelectCheckboxList}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Additional Information" id="viewtransfer">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Reason:" for="viewreason" />
+							<p:inputTextarea id="viewreason"
+								value="#{requestManager.viewForm.reason}" autoResize="false"
+								style="height:100px;width:500px" readonly="true"></p:inputTextarea>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Performer Remark">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Remark:" for="remark" />
+							<p:inputTextarea id="remark"
+								value="#{requestManager.viewForm.performRemark}"
+								style="height:100px;width:500px" readonly="true"
+								autoResize="false" />
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Attachment">
+						<div style="width: 48%; float: left">
+							<h:outputLabel value="Requester Files" />
+							<p:dataList value="#{requestManager.viewRequesterDownloadList}"
+								var="file" id="viewRequesterDownloadList">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+						<div style="width: 48%; float: left; margin-left: 10px">
+							<h:outputLabel value="Performer Files" />
+							<p:dataList value="#{requestManager.viewPerformerDownloadList}"
+								var="file" id="viewPerformerDownloadList">
+								<p:column>
+									<p:commandLink ajax="false" value="#{file.physicalName}">
+										<p:fileDownload value="#{file.file}" />
+									</p:commandLink>
+								</p:column>
+							</p:dataList>
+						</div>
+					</p:fieldset>
+				</p:scrollPanel>
+			</p:dialog>
+			<p:dialog header="Create Request" widgetVar="formCreateDialog"
+				id="createform" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				style="font-size: 100% !important">
+				<p:scrollPanel
+					style="height:500px;width:710px;border:none; font-size: 100% !important"
+					id="createscrollpanel" mode="native">
+					<p:fieldset legend="General Information" id="newgeneralinfo">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Posting Date: " />
+							<h:panelGrid columns="2">
+								<p:selectOneRadio id="postdateradio"
+									value="#{requestManager.postDateOption}" layout="pageDirection"
+									valueChangeListener="#{requestManager.setCalendarFlag}">
+									<f:selectItem itemLabel="Current Date" itemValue="1" />
+									<f:selectItem itemLabel="Specify Date" itemValue="2" />
+									<p:ajax event="change" update="calendar" />
+								</p:selectOneRadio>
+								<p:calendar value="#{requestManager.postDate}"
+									pattern="dd/MM/yyyy HH:mm"
+									disabled="#{!requestManager.useCurrentDate}" id="calendar"
+									showOn="button" />
+							</h:panelGrid>
+							<h:outputLabel value="Refer Form:" for="newreferform" />
+							<p:inputText id="newreferform"
+								value="#{requestManager.newForm.referForm}"></p:inputText>
+							<h:outputLabel value="System:" for="newsystem" />
+							<p:selectOneMenu value="#{requestManager.newSystemID}"
+								id="newsystem">
+								<f:selectItems value="#{requestManager.systemSelectItemList}" />
+								<p:ajax listener="#{requestManager.newSystemListSelected}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Database" id="newdatabase">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Objective:" />
+							<h:panelGroup>
+								<p:fieldset legend="DML" style="float:left">
+									<h:panelGrid columns="2">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.backupData}" />
+										<h:outputLabel value="Backup Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.deleteData}" />
+										<h:outputLabel value="Delete Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.insertData}" />
+										<h:outputLabel value="Insert Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.queryData}" />
+										<h:outputLabel value="Query Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.transferData}">
+											<p:ajax update="createservertype" />
+										</p:selectBooleanCheckbox>
+										<h:outputLabel value="Transfer Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.updateData}" />
+										<h:outputLabel value="Update Data" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DDL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.createIndex}" />
+										<h:outputLabel value="Create Index" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.dropIndex}" />
+										<h:outputLabel value="Drop Index" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.createTable}" />
+										<h:outputLabel value="Create Table" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.dropTable}" />
+										<h:outputLabel value="Drop Table" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.createView}" />
+										<h:outputLabel value="Create View" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.dropView}" />
+										<h:outputLabel value="Drop View" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.modifyTable}" />
+										<h:outputLabel value="Modify Table" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DCL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.createLogin}" />
+										<h:outputLabel value="Create Login" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.revokeLogin}" />
+										<h:outputLabel value="Revoke Login" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.grantData}" />
+										<h:outputLabel value="Grant Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.newForm.revokeData}" />
+										<h:outputLabel value="Revoke Data" />
+									</h:panelGrid>
+								</p:fieldset>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Server Type" id="createservertype">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Database Name(From):"
+								for="newdatabasenamefrom"
+								rendered="#{requestManager.newForm.transferData == true}" />
+							<p:selectOneMenu value="#{requestManager.newDatabaseFromID}"
+								id="newdatabasenamefrom"
+								rendered="#{requestManager.newForm.transferData == true}">
+								<f:selectItems value="#{requestManager.databaseSelectItemList}" />
+								<p:ajax listener="#{requestManager.newDatabaseFromListSelected}"
+									update="newdatabasenameto" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(From):" for="newservertypefrom"
+								rendered="#{requestManager.newForm.transferData == true}" />
+							<p:selectOneRadio value="#{requestManager.newServerTypeFrom}"
+								id="newservertypefrom"
+								rendered="#{requestManager.newForm.transferData == true}">
+								<f:selectItems
+									value="#{requestManager.serverTypeSelectCheckboxList}" />
+								<p:ajax listener="#{requestManager.newServerTypeFromSelected}" />
+							</p:selectOneRadio>
+							<h:outputLabel value="Database Name(To):" for="newdatabasenameto" />
+							<p:selectOneMenu value="#{requestManager.newDatabaseToID}"
+								id="newdatabasenameto">
+								<f:selectItems value="#{requestManager.databaseSelectItemList}" />
+								<p:ajax listener="#{requestManager.newDatabaseToListSelected}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(To):" for="newservertypeto" />
+							<p:selectOneRadio value="#{requestManager.newServerTypeTo}"
+								id="newservertypeto">
+								<f:selectItems
+									value="#{requestManager.serverTypeSelectCheckboxList}" />
+								<p:ajax listener="#{requestManager.newServerTypeToSelected}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Additional Information" id="newtransfer">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Reason:" for="newreason" />
+							<p:inputTextarea id="newreason"
+								value="#{requestManager.newForm.reason}" autoResize="false"
+								style="height:100px;width:500px" counter="counter"
+								counterTemplate="{0} characters remaining." maxlength="4000"></p:inputTextarea>
+							<h:outputText value="" />
+							<h:outputText id="counter" />
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset>
+						<h:panelGrid columns="3">
+							<p:commandButton action="#{requestManager.validateNewForm}"
+								value="Submit"
+								update=":growl, newgeneralinfo, newdatabase, newtransfer, formList, createservertype"
+								widgetVar="saveButton" onstart="saveButton.disable();"
+								onsuccess="saveButton.enable();" />
+							<p:commandButton action="#{requestManager.clearRequestData}"
+								value="Clear"
+								update="newgeneralinfo, newdatabase, newtransfer, createservertype" />
+							<p:ajaxStatus>
+								<f:facet name="start">
+									<h:graphicImage url="../resources/images/ajax-loader.gif" />
+								</f:facet>
+								<f:facet name="complete">
+									<h:outputText value="" />
+								</f:facet>
+							</p:ajaxStatus>
+						</h:panelGrid>
+					</p:fieldset>
+				</p:scrollPanel>
+			</p:dialog>
+			<p:dialog header="Edit Request" widgetVar="formEditDialog"
+				id="editform" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				style="font-size: 100% !important">
+				<p:scrollPanel
+					style="height:500px;width:710px;border:none; font-size: 100% !important"
+					mode="native">
+					<p:fieldset legend="General Information" id="editgeneralinfo">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Refer Form:" for="editreferform" />
+							<p:inputText id="editreferform"
+								value="#{requestManager.editForm.referForm}"></p:inputText>
+							<h:outputLabel value="System:" for="editsystem" />
+							<p:selectOneMenu value="#{requestManager.editSystemID}"
+								id="editsystem">
+								<f:selectItems value="#{requestManager.systemSelectItemList}" />
+								<p:ajax listener="#{requestManager.editSystemListSelected}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Database" id="editdatabase">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Objective:" />
+							<h:panelGroup>
+								<p:fieldset legend="DML" style="float:left">
+									<h:panelGrid columns="2">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.backupData}" />
+										<h:outputLabel value="Backup Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.deleteData}" />
+										<h:outputLabel value="Delete Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.insertData}" />
+										<h:outputLabel value="Insert Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.queryData}" />
+										<h:outputLabel value="Query Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.transferData}">
+											<p:ajax update="editservertype" />
+										</p:selectBooleanCheckbox>
+										<h:outputLabel value="Transfer Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.updateData}" />
+										<h:outputLabel value="Update Data" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DDL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.createIndex}" />
+										<h:outputLabel value="Create Index" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.dropIndex}" />
+										<h:outputLabel value="Drop Index" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.createTable}" />
+										<h:outputLabel value="Create Table" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.dropTable}" />
+										<h:outputLabel value="Drop Table" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.createView}" />
+										<h:outputLabel value="Create View" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.dropView}" />
+										<h:outputLabel value="Drop View" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.modifyTable}" />
+										<h:outputLabel value="Modify Table" />
+									</h:panelGrid>
+								</p:fieldset>
+								<p:fieldset legend="DCL" style="float:left">
+									<h:panelGrid columns="4">
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.createLogin}" />
+										<h:outputLabel value="Create Login" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.revokeLogin}" />
+										<h:outputLabel value="Revoke Login" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.grantData}" />
+										<h:outputLabel value="Grant Data" />
+										<p:selectBooleanCheckbox
+											value="#{requestManager.editForm.revokeData}" />
+										<h:outputLabel value="Revoke Data" />
+									</h:panelGrid>
+								</p:fieldset>
+							</h:panelGroup>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Server Type" id="editservertype">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Database Name(From):"
+								for="editdatabasenamefrom"
+								rendered="#{requestManager.editForm.transferData == true}" />
+							<p:selectOneMenu value="#{requestManager.editDatabaseFromID}"
+								id="editdatabasenamefrom"
+								rendered="#{requestManager.editForm.transferData == true}">
+								<f:selectItems value="#{requestManager.databaseSelectItemList}" />
+								<p:ajax
+									listener="#{requestManager.editDatabaseFromListSelected}"
+									update="editdatabasenameto" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(From):"
+								for="editservertypefrom"
+								rendered="#{requestManager.editForm.transferData == true}" />
+							<p:selectOneRadio value="#{requestManager.editServerTypeFrom}"
+								id="editservertypefrom"
+								rendered="#{requestManager.editForm.transferData == true}">
+								<f:selectItems
+									value="#{requestManager.serverTypeSelectCheckboxList}" />
+								<p:ajax listener="#{requestManager.editServerTypeFromSelected}" />
+							</p:selectOneRadio>
+							<h:outputLabel value="Database Name(To):"
+								for="editdatabasenameto" />
+							<p:selectOneMenu value="#{requestManager.editDatabaseToID}"
+								id="editdatabasenameto">
+								<f:selectItems value="#{requestManager.databaseSelectItemList}" />
+								<p:ajax listener="#{requestManager.editDatabaseToListSelected}" />
+							</p:selectOneMenu>
+							<h:outputLabel value="Server Type(To):" for="editservertypeto" />
+							<p:selectOneRadio value="#{requestManager.editServerTypeTo}"
+								id="editservertypeto">
+								<f:selectItems
+									value="#{requestManager.serverTypeSelectCheckboxList}" />
+								<p:ajax listener="#{requestManager.editServerTypeToSelected}" />
+							</p:selectOneRadio>
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset legend="Additional Information" id="edittransfer">
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Reason:" for="editreason" />
+							<p:inputTextarea id="editreason"
+								value="#{requestManager.editForm.reason}" autoResize="false"
+								style="height:100px;width:500px" counter="counter2"
+								counterTemplate="{0} characters remaining." maxlength="4000"></p:inputTextarea>
+							<h:outputText value="" />
+							<h:outputText id="counter2" />
+						</h:panelGrid>
+					</p:fieldset>
+					<p:spacer height="10" />
+					<p:fieldset>
+						<h:panelGrid columns="2">
+							<p:commandButton action="#{requestManager.validateEditForm}"
+								value="Submit"
+								update=":growl,editgeneralinfo,editdatabase,edittransfer,formList,editservertype"
+								widgetVar="editButton" onstart="editButton.disable();"
+								onsuccess="editButton.enable();" />
+							<p:ajaxStatus>
+								<f:facet name="start">
+									<h:graphicImage url="../resources/images/ajax-loader.gif" />
+								</f:facet>
+								<f:facet name="complete">
+									<h:outputText value="" />
+								</f:facet>
+							</p:ajaxStatus>
+						</h:panelGrid>
+					</p:fieldset>
+				</p:scrollPanel>
+			</p:dialog>
+			<p:dialog header="Attachment" widgetVar="attachDialog"
+				id="attachform" modal="false" resizable="false" showEffect="clip" hideEffect="clip"
+				width="500">
+				<p:fieldset legend="Upload" id="uploadfield">
+					<p:fileUpload fileUploadListener="#{requestManager.saveFile}"
+						mode="advance" multiple="true" update="downloadfield" />
+				</p:fieldset>
+				<p:spacer height="10" />
+				<p:fieldset legend="Requester Files" id="downloadfield">
+					<p:dataList value="#{requestManager.downloadList}" var="file"
+						id="downloadList">
+						<p:column>
+							<p:commandLink ajax="false" value="#{file.physicalName}">
+								<p:fileDownload value="#{file.file}" />
+							</p:commandLink>
+							<p:spacer width="10" />
+							<p:commandButton value="Delete"
+								onclick="deleteFileConfirm.show();" icon="ui-icon-trash">
+								<f:setPropertyActionListener
+									target="#{requestManager.deletedFile}" value="#{file}" />
+							</p:commandButton>
+						</p:column>
+					</p:dataList>
+				</p:fieldset>
+			</p:dialog>
+			<p:confirmDialog
+				message="This form will be deleted, do you want to proceed ?"
+				header="Delete Request" severity="alert" widgetVar="confirmation">
+				<p:commandButton value="Yes" oncomplete="confirmation.hide()"
+					action="#{requestManager.deleteForm}" update=":growl, formList" />
+				<p:commandButton value="No" onclick="confirmation.hide()" />
+			</p:confirmDialog>
+			<p:confirmDialog
+				message="This file will be deleted, do you want to proceed ?"
+				header="Delete File" severity="alert" widgetVar="deleteFileConfirm">
+				<p:commandButton value="Yes" oncomplete="deleteFileConfirm.hide()"
+					action="#{requestManager.deleteFile}" update=":growl, downloadList" />
+				<p:commandButton value="No" onclick="deleteFileConfirm.hide()" />
+			</p:confirmDialog>
+		</h:form>
+	</div>
+	<p:spacer height="80" />
+	<ui:include src="footer.xhtml" />
+</body>
+</html>
